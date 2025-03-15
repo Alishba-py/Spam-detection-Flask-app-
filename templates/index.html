@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Spam Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Email Spam Detection Chatbot 📧</h1>
+        <p>Enter an email message to check if it's spam or not.</p>
+
+        <textarea id="email-input" placeholder="Enter email text"></textarea>
+        <button id="submit-btn">Check Spam</button>
+
+        <div id="result-container"></div>
+    </div>
+
+    <script>
+        document.getElementById('submit-btn').addEventListener('click', function() {
+            const emailText = document.getElementById('email-input').value;
+
+            fetch('/predict', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: emailText })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('result-container').innerHTML = `<p style="color: red;">${data.error}</p>`;
+                } else {
+                    document.getElementById('result-container').innerHTML = `
+                        <p><strong>Naïve Bayes Prediction:</strong> ${data["Naïve Bayes Prediction"]}</p>
+                    `;
+                }
+            })
+            .catch(error => {
+                document.getElementById('result-container').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            });
+        });
+    </script>
+</body>
+</html>
